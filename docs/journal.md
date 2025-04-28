@@ -38,3 +38,11 @@ Dependencies :
     Crée un nouveau repo : demoApp
 
     Pas besoin d'initialiser avec README, .gitignore ou licence.
+
+
+
+    ---
+    git checkout -b demo/feature
+echo "public String hello() { return \"Hello DevOps!\"; }" >> src/main/java/.../Controller.java
+git commit -am "Ajout endpoint hello"
+git push origin demo/feature
