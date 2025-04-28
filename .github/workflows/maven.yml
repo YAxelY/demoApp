@@ -27,4 +27,4 @@ jobs:
     - name: 🛠️ Build & Run Tests
       run: mvn -B verify
       env:
-        MAVEN_OPTS: -Dmaven.repo.local=.m2/repository add 
+        MAVEN_OPTS: -Dmaven.repo.local=.m2/repository
