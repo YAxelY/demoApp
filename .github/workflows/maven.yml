@@ -1,4 +1,4 @@
-name: 🚀 Full CI/CD Pipeline (Build, Test, Deploy)
+name: ✅ CI Pipeline (Build & Test)
 
 on:
   push:
@@ -7,55 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
-  ci-cd-pipeline:
+  ci-validation:
     runs-on: ubuntu-latest
 
     steps:
-    # PHASE 1 - PRÉPARATION
+    # Étape 1 : Récupération du code
     - name: 🔍 Checkout Code
       uses: actions/checkout@v4
 
-    # PHASE 2 - BUILD & TEST (CI)
+    # Étape 2 : Configuration Java
     - name: ☕ Setup Java 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: maven # Optimisation du cache
+        cache: maven
 
-    - name: 🛠️ Build & Test
-      run: mvn -B verify # Au lieu de package pour lancer les tests
+    # Étape 3 : Build + Tests (Gatekeeper)
+    - name: 🛠️ Build & Run Tests
+      run: mvn -B verify
       env:
-        MAVEN_OPTS: -Dmaven.repo.local=.m2/repository # Cache local
-
-    # PHASE 3 - LIVRAISON (CD)
-    if: github.ref == 'refs/heads/main' # Ne déploie que sur main
-    needs: [ci-cd-pipeline] # Attendre la phase CI
-    
-    - name: 🐳 Build/Push Docker Image
-      env:
-        DOCKER_TAG: ${{ secrets.DOCKER_USERNAME }}/springboot-app:${{ github.sha }}
-      run: |
-        docker build -t $DOCKER_TAG .
-        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker push $DOCKER_TAG
-
-    - name: 🚀 Trigger Render Deployment
-      run: |
-        echo "Déclenchement du déploiement..."
-        RESPONSE=$(curl -s -o response.log -w "%{http_code}" -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }})
-        
-        if [ $RESPONSE -eq 200 ]; then
-          echo "✅ Déploiement lancé avec succès !"
-          cat response.log
-        else
-          echo "❌ Erreur: HTTP $RESPONSE"
-          exit 1
-        fi
-
-    # PHASE 4 - VÉRIFICATION (Optionnel mais démo-friendly)
-    - name: 🔎 Check Render Deployment
-      run: |
-        sleep 60 # Attendre le déploiement
-        curl -s https://votre-service.onrender.com/actuator/health | jq '.status' 
-        # Requiert jq d'installé ou utilise grep '"status":"UP"'
+        MAVEN_OPTS: -Dmaven.repo.local=.m2/repository add 
