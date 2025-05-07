@@ -12,9 +12,9 @@ class DemoAppApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
-void shouldFail() {
-    assertTrue(false); // Test volontairement cassé
-}
+// 	@Test
+// void shouldFail() {
+//     assertTrue(false); // Test volontairement cassé
+// }
 
 }
